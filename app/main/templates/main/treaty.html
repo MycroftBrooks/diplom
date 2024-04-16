@@ -1,0 +1,89 @@
+{% extends 'main/base.html' %}
+{% block title %}Договор № {{ treaty.number }}{% endblock %}
+
+{% block content %}
+    <div class="shadow p-4 mb-5 bg-body rounded">
+        <h3 class="text-center">Договор № {{ treaty.number }}</h3>
+        {% if not records %}
+            <div class="text-center pt-5">
+                <p class="text-center">Нет зафиксированных показаний</p>
+                <div class="pt-4">
+                    <a href="/treaty/record/create/{{ treaty.id }}" type="button" class="btn btn-primary py-3">Создать
+                        новые показания</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center pt-5">
+                <h5 class="pb-3">Список зафиксированных показаний</h5>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Дата показания</th>
+                        <th scope="col">Показание</th>
+                        <th scope="col">Тариф</th>
+                        <th scope="col">Дата подачи показания</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for record in records %}
+                        <tr>
+                            <td>{{ record.month }}</td>
+                            <td>{{ record.record }}</td>
+                            <td>{{ record.multiplier }}</td>
+                            <td>{{ record.created_at }}</td>
+                            <td><a href="/treaty/record/delete/{{ record.id }}" , type="button" class="btn btn-danger">Удалить</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <a href="/treaty/record/create/{{ treaty.id }}" type="button" class="btn btn-primary py-3">Подать новые показатели счетчика</a>
+                <div class="container py-5 text-center">
+                    <canvas id="record" width="400" height="200"></canvas>
+                    <p class="pt-3">График по показателям счетчиков</p>
+                </div>
+                <div class="container py-5 text-center">
+                    <canvas id="payment" width="400" height="200"></canvas>
+                    <p class="pt-3">График по платежам (соглано тарифу)</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let record = document.getElementById('record');
+        new Chart(record, {
+            type: 'line',
+            data: {
+                labels: [{% for label in labels_data %}'{{ label }}',{% endfor %}],
+                {#labels: ['January', 'Feburary', 'March'],#}
+                datasets: [{
+                    label: 'Показатели счетчиков',
+                    data: [{% for data in data_record %}'{{ data }}',{% endfor %}],
+                    {#data: [65, 59, 80, 81, 56, 55, 40],#}
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            }
+        });
+        let payment = document.getElementById('payment');
+        new Chart(payment, {
+            type: 'line',
+            data: {
+                labels: [{% for label in labels_data %}'{{ label }}',{% endfor %}],
+                datasets: [{
+                    label: 'Оплаты',
+                    data: [{% for data in data_payment %}'{{ data }}',{% endfor %}],
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            }
+        });
+    </script>
+{% endblock %}

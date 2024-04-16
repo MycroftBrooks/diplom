@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+{%block title%}ЭнергоСбор{%endblock%}
+
+{% block content %}
+<div class="shadow p-4 mb-5 bg-body rounded">
+    <h1 class="text-center">Добавить новое показание</h1>
+    {% if submitted %}
+        <div class="alert alert-success" role="alert">
+            Показание успешно зафиксировано!
+        </div>
+    {% endif %}
+
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Создать</button>
+        <span>{{error}}</span>
+    </form>
+</div>
+{% endblock %}
