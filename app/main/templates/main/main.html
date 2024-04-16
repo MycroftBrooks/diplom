@@ -1,6 +1,31 @@
 {% extends 'main/base.html' %}
-{%block title%}ЭнергоСбор{%endblock%}
+{% block title %}ЭнергоСбор{% endblock %}
 
 {% block content %}
-
+    {% if not treaties %}
+        <div class="text-center">
+            <h3>У вас нет договоров</h3>
+            <p class="pt-3">Создайте договор чтобы сохранить новую статистику или посмотреть существующую</p>
+            <a href="{% url 'create_treaty' %}" class="btn btn-primary" type="button">Создать новый договор</a>
+        </div>
+    {% else %}
+        <h4 class="text-center mb-3">Список договоров</h4>
+        <div class="row row-cols-1 row-cols-md-2 g-2">
+            {% for treaty in treaties %}
+                <div class='col'>
+                    <div class='card'>
+                        <div class='card-body col text-center'>
+                            <h3 class="mb-2">{{ treaty.name }}</h3>
+                            <p class="mb-4">{{ treaty.number }}</p>
+                            <a href="treaty/{{ treaty.id }}" class="btn btn-primary">Открыть информацию об показаниях</a>
+                            <a href="treaty/delete/{{ treaty.id }}" class="btn btn-danger">Удалить договор</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="text-center pt-5">
+            <a href="{% url 'create_treaty' %}" class="btn btn-primary" type="button">Создать новый договор</a>
+        </div>
+    {% endif %}
 {% endblock %}

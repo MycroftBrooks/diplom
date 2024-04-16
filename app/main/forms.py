@@ -2,6 +2,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django import forms
+from month.widgets import MonthSelectorWidget
+
+from main.models import Treaty, Record
 
 username_validator = UnicodeUsernameValidator()
 
@@ -71,23 +74,70 @@ class RegisterUserForm(UserCreationForm):
 
 class SupportForm(forms.Form):
     email = forms.EmailField(
-        label="Email",
+        label="Электронная почта",
         required=True,
         widget=forms.EmailInput(
-            attrs={"class": "form-control", "placeholder": "Enter your email"}
+            attrs={"class": "form-control", "placeholder": "Напишите свою электронную почту"}
         ),
     )
     subject = forms.CharField(
-        label="Subject",
+        label="Тема",
         required=True,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Enter subject"}
+            attrs={"class": "form-control", "placeholder": "Напишите тему сообщение"}
         ),
     )
     message = forms.CharField(
-        label="Message",
+        label="Сообщение",
         required=True,
         widget=forms.Textarea(
-            attrs={"class": "form-control", "placeholder": "Write your problem"}
+            attrs={"class": "form-control", "placeholder": "Опишите свою проблему"}
         ),
     )
+
+
+class TreatyForm(forms.ModelForm):
+    class Meta:
+        model = Treaty
+        fields = ["name", "number"]
+        labels = {
+            "name": "Название договора",
+            "number": "Номер договора",
+        }
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Введдите название договора",
+                }
+            ),
+            "number": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "Введите номер договора"}
+            ),
+        }
+
+
+class RecordForm(forms.ModelForm):
+    class Meta:
+        model = Record
+        fields = ["record", "multiplier", 'month']
+        labels = {
+            "record": "Показание",
+            "multiplier": "Тариф (на что будет умножаться)",
+            "month": "Месяц показания",
+        }
+        widgets = {
+            "record": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Введдите значение показания",
+                }
+            ),
+            "multiplier": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "Введите значение тарифа"}
+            ),
+            "month": MonthSelectorWidget(
+                attrs={"class": "form-control", "placeholder": "Введите значение тарифа"}
+            ),
+        }
+
